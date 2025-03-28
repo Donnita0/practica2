@@ -21,21 +21,21 @@ try:            # Se inicia un try para capturar errores y permitir salir del bu
              try:
                 datos = linea.split(",") # intenta dividir la línea recibida en partes separadas por comas.
                 if len(datos) == 4:
-                    temperatura = float(datos[0])
-                    humedad = float(datos[1])
-                    luz = int(datos[2])
-                    voltaje = float(datos[3])
+                    temperatura = float(datos[0]) # convierte el primer elemento de la lista en un numero de punto flotante y lo guarda a la variable temperatura. 
+                    humedad = float(datos[1]) # convierte el segundo dato en un numero de punto flotante y lo asigna a la variable humedad. 
+                    luz = int(datos[2]) # convierte el tercer elemento de datos en un numero entero y lo guarda en luz. 
+                    voltaje = float(datos[3]) # Convierte el cuarto elemento de datos en un número de punto flotante y lo guarda en voltaje.
 
-                    print(f"T: {temperatura}°C, H: {humedad}%, L: {luz}, V: {voltaje}V")
+                    print(f"T: {temperatura}°C, H: {humedad}%, L: {luz}, V: {voltaje}V") # Muestra en pantalla los valores capturados de los sensores.
 
-                    # Guardar en CSV
-                    with open(archivo_csv, mode='a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow([temperatura, humedad, luz, voltaje])
+                    # Guardar en CSV 
+                    with open(archivo_csv, mode='a', newline='') as file: # Abre un archivo CSV para guardar los datos de los sensores.
+                        writer = csv.writer(file) # Crea un objeto escritor para escribir datos en formato CSV.
+                        writer.writerow([temperatura, humedad, luz, voltaje]) # Escribe una nueva línea en el archivo con los valores de los sensores.
                 else:
-                    print("Error: Datos incompletos recibidos")
-            except ValueError:
+                    print("Error: Datos incompletos recibidos") # Muestra un mensaje de error si la lista datos no tiene los 4 valores esperados.
+            except ValueError: # Captura errores al convertir datos (float() o int()).
                 print("Error: Formato inválido en los datos")
-except KeyboardInterrupt:
+except KeyboardInterrupt: #  Permite al usuario detener el programa con Ctrl + C de forma segura.
     print("\nMonitoreo finalizado.")
     ser.close()
