@@ -1,25 +1,25 @@
-import serial
-import csv
-import time
+import serial #Permite la comunicación con dispositivos a través del puerto serial.
+import csv    # Facilita la lectura y escritura de archivos en formato CSV.
+import time   # Proporciona funciones para manejar pausas y tiempos de espera.
 
 # Configuración del puerto serial (ajusta el puerto según corresponda)
-ser = serial.Serial('COM3', 9600, timeout=1)
+ser = serial.Serial('COM3', 9600, timeout=1)      # Se abre el puerto serial COM3 con una velocidad de 9600 baudios.
 time.sleep(2)  # Esperar que la conexión se estabilice
 
 # Archivo CSV
-archivo_csv = "datos_sensores.csv"
+archivo_csv = "datos_sensores.csv"  # define donde se guaradaran los datos 
 
-# Crear y escribir encabezados si el archivo no existe
-with open(archivo_csv, mode='w', newline='') as file:
+# Crear y escribir encabezados si el archivo no existe  
+with open(archivo_csv, mode='w', newline='') as file:    #Se abre el archivo en modo escritura ('w'), lo que borra cualquier dato previo en el archivo.
     writer = csv.writer(file)
     writer.writerow(["Temperatura (°C)", "Humedad (%)", "Luminosidad", "Voltaje (V)"])
 
-try:
-    while True:
-        linea = ser.readline().decode('utf-8').strip()
-        if linea:
-            try:
-                datos = linea.split(",")
+try:            # Se inicia un try para capturar errores y permitir salir del bucle con Ctrl + C.
+    while True: # Un bucle while True mantiene el monitoreo en ejecución indefinidamente.
+        linea = ser.readline().decode('utf-8').strip() # ser.readline() lee una línea completa de datos recibidos desde el puerto serial. .decode('utf-8') convierte los datos de bytes a cadena de texto. .strip() elimina espacios o saltos de línea extra.            
+        if linea: # verfica si la linea recibida no esta vacia 
+             try:
+                datos = linea.split(",") # intenta dividir la línea recibida en partes separadas por comas.
                 if len(datos) == 4:
                     temperatura = float(datos[0])
                     humedad = float(datos[1])
