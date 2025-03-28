@@ -1,0 +1,41 @@
+import serial
+import csv
+import time
+
+# Configuración del puerto serial (ajusta el puerto según corresponda)
+ser = serial.Serial('COM3', 9600, timeout=1)
+time.sleep(2)  # Esperar que la conexión se estabilice
+
+# Archivo CSV
+archivo_csv = "datos_sensores.csv"
+
+# Crear y escribir encabezados si el archivo no existe
+with open(archivo_csv, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(["Temperatura (°C)", "Humedad (%)", "Luminosidad", "Voltaje (V)"])
+
+try:
+    while True:
+        linea = ser.readline().decode('utf-8').strip()
+        if linea:
+            try:
+                datos = linea.split(",")
+                if len(datos) == 4:
+                    temperatura = float(datos[0])
+                    humedad = float(datos[1])
+                    luz = int(datos[2])
+                    voltaje = float(datos[3])
+
+                    print(f"T: {temperatura}°C, H: {humedad}%, L: {luz}, V: {voltaje}V")
+
+                    # Guardar en CSV
+                    with open(archivo_csv, mode='a', newline='') as file:
+                        writer = csv.writer(file)
+                        writer.writerow([temperatura, humedad, luz, voltaje])
+                else:
+                    print("Error: Datos incompletos recibidos")
+            except ValueError:
+                print("Error: Formato inválido en los datos")
+except KeyboardInterrupt:
+    print("\nMonitoreo finalizado.")
+    ser.close()
