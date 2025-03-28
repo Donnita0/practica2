@@ -1,0 +1,34 @@
+#include <DHT.h>
+
+#define DHTPIN 2       // Pin del sensor de temperatura y humedad
+#define DHTTYPE DHT11  // Tipo de sensor DHT
+#define LDRPIN A0      // Pin del sensor de luz (LDR)
+#define VOLT_PIN A1    // Pin de medición de voltaje
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+    Serial.begin(9600);
+    dht.begin();
+}
+
+void loop() {
+    float temperatura = dht.readTemperature(); // °C
+    float humedad = dht.readHumidity(); // %
+    int luz = analogRead(LDRPIN); // Valor entre 0 y 1023
+    float voltaje = (analogRead(VOLT_PIN) * 5.0) / 1023; // Conversión a voltaje
+
+    // Validación de datos
+    if (isnan(temperatura) || isnan(humedad)) {
+        Serial.println("Error: Sensor DHT no disponible");
+        return;
+    }
+
+    // Enviar datos en formato CSV
+    Serial.print(temperatura); Serial.print(",");
+    Serial.print(humedad); Serial.print(",");
+    Serial.print(luz); Serial.print(",");
+    Serial.println(voltaje);
+
+    delay(2000);
+}
