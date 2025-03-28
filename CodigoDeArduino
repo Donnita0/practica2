@@ -1,34 +1,41 @@
-#include <DHT.h>
+#include <DHT.h>  // Incluye la librería para el sensor de temperatura y humedad
 
-#define DHTPIN 2       // Pin del sensor de temperatura y humedad
-#define DHTTYPE DHT11  // Tipo de sensor DHT
-#define LDRPIN A0      // Pin del sensor de luz (LDR)
-#define VOLT_PIN A1    // Pin de medición de voltaje
+#define DHTPIN 2       // Define el pin digital donde está conectado el sensor DHT
+#define DHTTYPE DHT11  // Especifica el modelo del sensor DHT (puede ser DHT11, DHT22, etc.)
+#define LDRPIN A0      // Define el pin analógico donde está conectado el sensor de luz (LDR)
+#define VOLT_PIN A1    // Define el pin analógico donde se mide el voltaje
 
-DHT dht(DHTPIN, DHTTYPE);
+DHT dht(DHTPIN, DHTTYPE);  // Crea un objeto DHT para interactuar con el sensor
 
 void setup() {
-    Serial.begin(9600);
-    dht.begin();
+    Serial.begin(9600); // Inicia la comunicación serial con una velocidad de 9600 baudios
+    dht.begin(); // Inicia el sensor DHT
 }
 
 void loop() {
-    float temperatura = dht.readTemperature(); // °C
-    float humedad = dht.readHumidity(); // %
-    int luz = analogRead(LDRPIN); // Valor entre 0 y 1023
-    float voltaje = (analogRead(VOLT_PIN) * 5.0) / 1023; // Conversión a voltaje
+    // Lee la temperatura en grados Celsius desde el sensor DHT
+    float temperatura = dht.readTemperature();
+    
+    // Lee la humedad relativa en porcentaje desde el sensor DHT
+    float humedad = dht.readHumidity();
+    
+    // Lee la intensidad de luz como un valor entre 0 y 1023 (ADC de 10 bits)
+    int luz = analogRead(LDRPIN);
+    
+    // Convierte la lectura analógica del voltaje a una escala de 0 a 5V
+    float voltaje = (analogRead(VOLT_PIN) * 5.0) / 1023;
 
-    // Validación de datos
+    // Validación: Si el sensor DHT no responde, se muestra un error y se detiene la ejecución
     if (isnan(temperatura) || isnan(humedad)) {
         Serial.println("Error: Sensor DHT no disponible");
-        return;
+        return; // Sale del loop para evitar enviar datos incorrectos
     }
 
-    // Enviar datos en formato CSV
-    Serial.print(temperatura); Serial.print(",");
-    Serial.print(humedad); Serial.print(",");
-    Serial.print(luz); Serial.print(",");
-    Serial.println(voltaje);
+    // Enviar los datos al puerto serie en formato CSV (valores separados por comas)
+    Serial.print(temperatura); Serial.print(",");  // Envío temperatura y separador
+    Serial.print(humedad); Serial.print(",");      // Envío humedad y separador
+    Serial.print(luz); Serial.print(",");          // Envío luminosidad y separador
+    Serial.println(voltaje);                       // Envío voltaje y cambio de línea
 
-    delay(2000);
+    delay(2000); // Espera 2 segundos antes de la siguiente medición
 }
